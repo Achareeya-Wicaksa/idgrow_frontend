@@ -6,10 +6,12 @@ use App\Http\Controllers\BarangController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\MutasiController;
 
 Route::view('/login', 'auth.login')->name('login');
 Route::redirect('/', '/barang');
 Route::redirect('/dashboard', '/barang');
+Route::resource('mutasi', MutasiController::class)->middleware('auth');
 Route::post('/login', function (Request $request) {
     $response = Http::post(env('API_URL') . '/login', [
         'email' => $request->email,

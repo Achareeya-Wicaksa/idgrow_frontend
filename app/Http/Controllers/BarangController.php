@@ -4,36 +4,31 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Session;
+use GuzzleHttp\Client;
+
 
 class BarangController extends Controller
 {
-    private $apiUrl;
+    private $client;
 
     public function __construct()
     {
-        $this->apiUrl = env('API_URL');
+        $this->client = new Client([
+            'base_uri' => env('API_URL'),
+            'headers' => [
+                'Authorization' => 'Bearer ' . session('access_token'),
+                'Accept'        => 'application/json',
+            ]
+            
+        ]);
     }
 
     public function index()
-{
-    $response = Http::get("{$this->apiUrl}/barang");
-    $barangs = $response->json();
-
-    // Debug untuk memeriksa struktur data
-    //dd($barangs);
-
-    return view('barang.index', ['barangs' => $barangs]);
-}
-
-    public function store(Request $request)
     {
-        $token = Session::get('access_token');
-        Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])->post("{$this->apiUrl}/barang", $request->all());
+        $response = $this->client->get('/barang');
+        $barangs = json_decode($response->getBody(), true);
 
-        return redirect()->route('barang.index');
+        return view('barang.index', compact('barangs'));
     }
     public function edit($id)
     {
@@ -44,22 +39,32 @@ class BarangController extends Controller
     //dd($barang);
         return view('barang.edit', ['barang' => $response->json()]);
     }
+    public function store(Request $request)
+    {
+        $headers = [
+            'Authorization' => 'Bearer ' . session('access_token'),
+            'Accept'        => 'application/json',
+        ];
+
+        $response = $this->client->post('/barang', [
+            'headers' => $headers,
+            'json'    => $request->all(),
+        ]);
+        return redirect()->route('barang.index');
+    }
+
     public function update(Request $request, $id)
     {
-        $token = Session::get('access_token');
-        Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])->put("{$this->apiUrl}/barang/{$id}", $request->all());
+        $response = $this->client->put("/barang/{$id}", [
+            'json' => $request->all()
+        ]);
 
         return redirect()->route('barang.index');
     }
 
     public function destroy($id)
     {
-        $token = Session::get('access_token');
-        Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])->delete("{$this->apiUrl}/barang/{$id}");
+        $response = $this->client->delete("/barang/{$id}");
 
         return redirect()->route('barang.index');
     }

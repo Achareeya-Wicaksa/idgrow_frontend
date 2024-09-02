@@ -82,13 +82,13 @@
                         <td>{{ $barang['lokasi'] }}</td>
                         <td>
                             <!-- Form untuk update barang -->
-                            <a href="{{ route('barang.edit', $barang['ID']) }}">Edit</a>
+                            <a href ="{{ route('barang.edit', $barang['ID']) }}" class="btn btn-warning">Edit</a>
 
                             <!-- Form untuk delete barang -->
                             <form action="{{ url('/barang/' . $barang['ID']) }}" method="POST" style="display:inline;">
                             @method('DELETE')
                             @csrf
-                            <button type="submit">Delete</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
 </form>
                         </td>
                     </tr>

@@ -1,9 +1,27 @@
-import './bootstrap';
 // resources/js/app.js
-import 'bootstrap/dist/js/bootstrap.bundle.min';
+import axios from 'axios';
 
-import Alpine from 'alpinejs';
+const token = document.querySelector('meta[name="auth-token"]').getAttribute('content');
 
-window.Alpine = Alpine;
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-Alpine.start();
+// Contoh request GET
+axios.get('/barang')
+    .then(response => {
+        console.log(response.data);
+    })
+    .catch(error => {
+        console.error(error.response);
+    });
+
+// Contoh request POST
+axios.post('/barang', {
+    // data Anda di sini
+})
+.then(response => {
+    console.log(response.data);
+})
+.catch(error => {
+    console.error(error.response);
+});

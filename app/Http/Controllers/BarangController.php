@@ -32,12 +32,12 @@ class BarangController extends Controller
     }
     public function edit($id)
     {
-        $response = Http::get("{$this->apiUrl}/barang/{$id}");
-        $barang = $response->json();
+        // Ambil data barang berdasarkan ID
+        $response = $this->client->get("/barang/{$id}");
+        $barang = json_decode($response->getBody(), true);
 
-    // Debugging: Tampilkan data barang untuk melihat struktur array-nya
-    //dd($barang);
-        return view('barang.edit', ['barang' => $response->json()]);
+        // Tampilkan form edit dengan data barang yang sudah diambil
+        return view('barang.edit', compact('barang'));
     }
     public function store(Request $request)
     {

@@ -1,4 +1,3 @@
-<!-- resources/views/mutasi/index.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,10 +46,7 @@
     <!-- Form untuk menambah Mutasi baru -->
     <form action="{{ url('/mutasi') }}" method="POST" class="mb-4">
         @csrf
-        <div class="mb-3">
-            <label for="tanggal" class="form-label">Tanggal</label>
-            <input type="date" name="tanggal" id="tanggal" class="form-control" required>
-        </div>
+        
         <div class="mb-3">
             <label for="jenis_mutasi" class="form-label">Jenis Mutasi</label>
             <input type="text" name="jenis_mutasi" id="jenis_mutasi" class="form-control" required>
@@ -80,7 +76,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($mutasis as $mutasi)
+            @forelse($mutasis as $mutasi)
                 <tr>
                     <td>{{ $mutasi['ID'] ?? 'N/A' }}</td>
                     <td>{{ $mutasi['tanggal'] }}</td>
@@ -96,7 +92,11 @@
                         </form>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="7" class="text-center">Tidak ada data mutasi.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

@@ -36,40 +36,33 @@ class MutasiController extends Controller
 
     public function store(Request $request)
 {
-    $request->validate([
-        'tanggal' => 'required|date',
-        'jenis_mutasi' => 'required|string',
-        'jumlah' => 'required|integer',
-        'barang_id' => 'required|integer',
+    // Mengambil tanggal dan waktu saat ini
+    $tanggal = Carbon::now()->format('Y-m-d\TH:i:s\Z');
+
+    // Mengirim request ke API Golang dengan data yang diperlukan
+    $response = $this->client->post('/mutasi', [
+        'json' => [
+            'tanggal' => $tanggal, // Menggunakan tanggal saat ini
+            'jenis_mutasi' => $request->jenis_mutasi,
+            'jumlah' => $request->jumlah,
+            'barang_id' => $request->barang_id,
+        ],
     ]);
 
-    // Mendapatkan user_id dari auth
-    $user_id = auth()->id();
-
-    // Menyimpan data mutasi
-    $mutasi = new Mutasi([
-        'tanggal' => $request->input('tanggal'),
-        'jenis_mutasi' => $request->input('jenis_mutasi'),
-        'jumlah' => $request->input('jumlah'),
-        'barang_id' => $request->input('barang_id'),
-        'user_id' => $user_id,
+    return redirect()->route('mutasi.index');
+}
+public function edit(Request $request, $id)
+{
+    $response = $this->client->put("/mutasi/{$id}", [
+        'json' => $request->all(),
+        'headers' => [
+            'Authorization' => 'Bearer ' . session('access_token'),
+        ]
     ]);
 
-    $mutasi->save();
-
-    return redirect()->route('mutasi.index')->with('success', 'Mutasi berhasil ditambahkan');
+    return redirect()->route('mutasi.index');
 }
 
-
-    public function edit($id)
-    {
-        // Ambil data barang berdasarkan ID
-        $response = $this->client->get("/mutasi/{$id}");
-        $mutasi = json_decode($response->getBody(), true);
-        //dd($mutasi);
-        // Tampilkan form edit dengan data barang yang sudah diambil
-        return view('mutasi.edit', compact('mutasi'));
-    }
 
     public function update(Request $request, $id)
     {

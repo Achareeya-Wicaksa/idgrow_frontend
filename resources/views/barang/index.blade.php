@@ -75,7 +75,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($barangs as $barang)
+            @forelse($barangs as $barang)
                     <tr>
                         <td>{{ $barang['ID'] ?? 'N/A' }}</td>
                         <td>{{ $barang['nama_barang'] }}</td>
@@ -93,7 +93,11 @@
 </form>
                         </td>
                     </tr>
-                @endforeach
+                    @empty
+                <tr>
+                    <td colspan="7" class="text-center">Tidak ada data mutasi.</td>
+                </tr>
+            @endforelse
             </tbody>
         </table>
     </div>
